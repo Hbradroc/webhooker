@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 import { sendWebhook } from './actions/sendWebhook'
 import { Button } from "@/components/ui/button"
@@ -24,9 +24,15 @@ function SubmitButton() {
 
 export default function Home() {
   const [message, setMessage] = useState('')
-  const [webhookUrl, setWebhookUrl] = useState('')
+  const [webhookUrl, setWebhookUrl] = useState(localStorage.getItem('webhookUrl') || '')
   const [showWebhookInput, setShowWebhookInput] = useState(false)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null)
+
+  useEffect(() => {
+    if (webhookUrl) {
+      localStorage.setItem('webhookUrl', webhookUrl)
+    }
+  }, [webhookUrl])
 
   async function handleSubmit(formData: FormData) {
     const result = await sendWebhook(formData)
